@@ -1,0 +1,32 @@
+{
+  "name": "@rage-js/atlas",
+  "version": "0.0.1",
+  "description": "A prompt-based dashboard to execute certain RAGE related operations",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "scripts": {
+    "build": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rage-js/atlas.git"
+  },
+  "keywords": [
+    "rage-atlas",
+    "rage",
+    "ragejs",
+    "rage-js"
+  ],
+  "author": "Maghish",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rage-js/atlas/issues"
+  },
+  "homepage": "https://github.com/rage-js/atlas#readme",
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  }
+}
