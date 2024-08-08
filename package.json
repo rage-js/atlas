@@ -13,6 +13,7 @@
   },
   "keywords": [
     "rage-atlas",
+    "rage-cli",
     "rage",
     "ragejs",
     "rage-js"
@@ -28,5 +29,14 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4"
+  },
+  "bin": {
+    "rage-atlas": "./dist/index.js"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^5.3.8",
+    "chalk": "^4.0.0",
+    "mongodb": "^6.8.0",
+    "nanospinner": "^1.1.0"
   }
 }
