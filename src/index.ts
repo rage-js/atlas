@@ -6,6 +6,7 @@ import { createSpinner } from "nanospinner";
 import * as fsS from "fs";
 import * as fsP from "fs/promises";
 import path from "path";
+import * as Operations from "./util/operations";
 
 interface RageConfigurations {
   method: "PAI" | "NI" | "POU";
@@ -70,8 +71,6 @@ async function fetchAllConfigurations(
   configPath: string
 ): Promise<RageConfigurations> {
   try {
-    console.log("\n");
-
     // Start the loading spinner
     const spinner = createSpinner("Finding config file...").start();
     await sleep(5000);
@@ -161,10 +160,63 @@ async function checkDatabasePath(databasePath: string): Promise<boolean> {
   }
 }
 
+/**
+ * Function that is in a never ending loop, which prompts repeatedly the list of operations that can be executed
+ */
+async function prompt() {
+  try {
+    var loopActive = true;
+    while (loopActive) {
+      // Clear the console (Works on Windows, not sure if it works on Mac and Linux OS)
+      process.stdout.write("\x1Bc");
+
+      const op = await select({
+        message:
+          "Choose any operation below to execute (Press Ctrl+C to exit):",
+        choices: [
+          {
+            name: "Pull cloud database",
+            value: "PullCloudDatabase",
+            description:
+              "Fetches the cloud database data and overwrites the local database with the fetched data.",
+          },
+          {
+            name: "Push local database",
+            value: "PushLocalDatabase",
+            description:
+              "Pushes the local database data to the cloud database and updates the cloud database.",
+          },
+        ],
+      });
+
+      if (op === "PullCloudDatabase") {
+        await Operations.pullCloudDatabase();
+      }
+
+      if (op === "PushLocalDatabase") {
+        await Operations.pushLocalDatabase();
+      }
+
+      continue;
+    }
+  } catch (error: any) {
+    if (error.message === "ExitPromptError") {
+      console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
+      process.exit(1);
+    } else {
+      console.log(chalk.redBright("\n Terminating the process..."));
+      process.exit(1);
+    }
+  }
+}
+
 async function start() {
   const { configPath, databasePath } = await askCredentials();
+  console.log("\n"); // Give a new line after prompting for the spinners
   const configurations = await fetchAllConfigurations(configPath);
   await checkDatabasePath(databasePath);
+  // Prompt function automatically enters new lines when needed, so there is noo need to manually console log them
+  await prompt();
 }
 
 start();
