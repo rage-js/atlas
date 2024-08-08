@@ -114,9 +114,57 @@ async function fetchAllConfigurations(
   }
 }
 
+/**
+ * Function that checks if the given database path exists, if not creates one.
+ * @returns {Promise<boolean>}
+ */
+async function checkDatabasePath(databasePath: string): Promise<boolean> {
+  try {
+    // Start the loading spinner
+    const spinner = createSpinner("Finding the database directory...").start();
+    await sleep(5000);
+
+    // Get the full path
+    const currentPath = process.cwd();
+    const fullPath =
+      databasePath === "." ? currentPath : path.join(currentPath, databasePath);
+
+    try {
+      // Find the full path
+      await fsP.access(fullPath, fsS.constants.F_OK);
+      spinner.clear();
+      spinner.success({ text: `Directory found successfully.` });
+    } catch (error: any) {
+      if (error.code === "ENOENT") {
+        // If directory doesn't exist
+        spinner.update({ text: `Creating directory...` });
+        await fsP.mkdir(fullPath, { recursive: true });
+        spinner.clear();
+        spinner.success({
+          text: `Directory created successfully.`,
+        });
+      } else {
+        console.log(chalk.red(`\nError accessing directory: ${error.message}`));
+        process.exit(1);
+      }
+    }
+
+    return true;
+  } catch (error: any) {
+    if (error.message === "ExitPromptError") {
+      console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
+      process.exit(1);
+    } else {
+      console.log(chalk.redBright("\n Terminating the process..."));
+      process.exit(1);
+    }
+  }
+}
+
 async function start() {
-  const cred = await askCredentials();
-  const configurations = await fetchAllConfigurations(cred.configPath);
+  const { configPath, databasePath } = await askCredentials();
+  const configurations = await fetchAllConfigurations(configPath);
+  await checkDatabasePath(databasePath);
 }
 
 start();
