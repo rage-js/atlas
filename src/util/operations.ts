@@ -1,11 +1,74 @@
-async function pullCloudDatabase() {
-  console.log("FETCHING (Example)");
+import { input, select, confirm, password } from "@inquirer/prompts";
+import chalk from "chalk";
+import { RageConfigurations } from "../main";
 
-  await new Promise((resolve) => {
-    setTimeout(resolve, 5000);
-  });
+async function pullCloudDatabase(configurations: RageConfigurations) {
+  try {
+    const op = await confirm({
+      message:
+        "Proceed with database specific configuration written on rage config file? (Enter no to manually enter the configuration):",
+    });
+
+    var newConfigSettings: RageConfigurations["databaseSpecificSettings"] = {
+      secretKey: configurations.databaseSpecificSettings.secretKey,
+      dbs: configurations.databaseSpecificSettings.dbs,
+      excludeCollections:
+        configurations.databaseSpecificSettings.excludeCollections,
+    };
+
+    // User wants to input configuration manually
+    if (op !== true) {
+      if (configurations.databaseType === "MongoDB") {
+        var databaseSecret = await password({
+          message:
+            "Enter the database secret key (MongoDB URI) (Hit enter if you want to proceed with already existing configuration from rage config file):",
+        });
+
+        // If the user wants to proceed with existing database secret
+        if (databaseSecret === "") {
+          databaseSecret = configurations.databaseSpecificSettings.secretKey!;
+        }
+
+        var dbs: string | string[] = await input({
+          message:
+            "Enter the whitelisted databases (Use ',' to seperate the values) (Hit enter if you want to proceed with already existing configuration rage config file):",
+        });
+
+        dbs = dbs.split(",");
+        dbs = dbs.map((e) => e.trim());
+
+        var excludeCollections: string | string[] = await input({
+          message:
+            "Enter the blacklisted collections in all databases (Mention the database of the collection, e.g. 'db/col') (Use ',' to seperate the values):",
+        });
+        excludeCollections = excludeCollections.split(",");
+        excludeCollections = excludeCollections.map((e) => e.trim());
+
+        newConfigSettings.dbs = dbs;
+        newConfigSettings.excludeCollections = excludeCollections;
+        newConfigSettings.secretKey = databaseSecret;
+      }
+    } else {
+      newConfigSettings.dbs = configurations.databaseSpecificSettings.dbs;
+      newConfigSettings.excludeCollections =
+        configurations.databaseSpecificSettings.excludeCollections;
+      newConfigSettings.secretKey =
+        configurations.databaseSpecificSettings.secretKey;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+  } catch (error: any) {
+    if (error.message === "ExitPromptError") {
+      console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
+      process.exit(1);
+    } else {
+      console.log(chalk.redBright("\n Terminating the process..."));
+      process.exit(1);
+    }
+  }
 }
-async function pushLocalDatabase() {
+
+async function pushLocalDatabase(configurations: RageConfigurations) {
   console.log("PUSHING (Example)");
 
   await new Promise((resolve) => {
