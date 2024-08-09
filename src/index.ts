@@ -7,21 +7,7 @@ import * as fsS from "fs";
 import * as fsP from "fs/promises";
 import path from "path";
 import * as Operations from "./util/operations";
-
-interface RageConfigurations {
-  method: "PAI" | "NI" | "POU";
-  methodSpecificSettings: {
-    interval?: number;
-  };
-  databaseType: "MongoDB";
-  databaseSpecificSettings: {
-    secretKey?: string;
-    dbs?: string;
-    excludeCollections?: string;
-  };
-  loopStartDelay: number;
-  outDir: string;
-}
+import { RageConfigurations } from "./main";
 
 /**
  * Function that prompts the user to enter credentials like application's path, database's path, database's type, database's secret key, etc.
@@ -163,7 +149,7 @@ async function checkDatabasePath(databasePath: string): Promise<boolean> {
 /**
  * Function that is in a never ending loop, which prompts repeatedly the list of operations that can be executed
  */
-async function prompt() {
+async function prompt(configurations: RageConfigurations) {
   try {
     var loopActive = true;
     while (loopActive) {
@@ -190,11 +176,11 @@ async function prompt() {
       });
 
       if (op === "PullCloudDatabase") {
-        await Operations.pullCloudDatabase();
+        await Operations.pullCloudDatabase(configurations);
       }
 
       if (op === "PushLocalDatabase") {
-        await Operations.pushLocalDatabase();
+        await Operations.pushLocalDatabase(configurations);
       }
 
       continue;
@@ -216,7 +202,7 @@ async function start() {
   const configurations = await fetchAllConfigurations(configPath);
   await checkDatabasePath(databasePath);
   // Prompt function automatically enters new lines when needed, so there is noo need to manually console log them
-  await prompt();
+  await prompt(configurations);
 }
 
 start();
