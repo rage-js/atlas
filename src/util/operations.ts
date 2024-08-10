@@ -1,6 +1,7 @@
 import { input, select, confirm, password } from "@inquirer/prompts";
 import chalk from "chalk";
 import { RageConfigurations } from "../main";
+import { MongoClient } from "mongodb";
 
 async function pullCloudDatabase(configurations: RageConfigurations) {
   try {
@@ -55,6 +56,27 @@ async function pullCloudDatabase(configurations: RageConfigurations) {
       newConfigSettings.secretKey =
         configurations.databaseSpecificSettings.secretKey;
     }
+
+    // Fetch the cloud database and update the local database
+
+    // Create a MongoDB connection
+    const mongodbInstance = new MongoClient(newConfigSettings.secretKey!);
+    await mongodbInstance.connect();
+
+    newConfigSettings.dbs!.forEach(async (dbName) => {
+      const db = mongodbInstance.db(dbName);
+      const collections = await db.listCollections().toArray();
+
+      for (const collection of collections) {
+        const collectionName = collection.name;
+        if (collectionName in newConfigSettings.excludeCollections!) {
+          // Skip
+        } else {
+          const data = await db.collection(collectionName).find().toArray();
+          console.log(data);
+        }
+      }
+    });
 
     await new Promise((resolve) => setTimeout(resolve, 10000));
   } catch (error: any) {
