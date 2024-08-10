@@ -93,7 +93,7 @@ async function fetchAllConfigurations(
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
       process.exit(1);
     } else {
-      console.log(chalk.redBright("\n Terminating the process..."));
+      console.log(chalk.redBright("\nTerminating the process..."));
       process.exit(1);
     }
   }
@@ -140,7 +140,7 @@ async function checkDatabasePath(databasePath: string): Promise<boolean> {
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
       process.exit(1);
     } else {
-      console.log(chalk.redBright("\n Terminating the process..."));
+      console.log(chalk.redBright("\nTerminating the process..."));
       process.exit(1);
     }
   }
@@ -187,10 +187,10 @@ async function prompt(configurations: RageConfigurations) {
     }
   } catch (error: any) {
     if (error.message === "ExitPromptError") {
-      console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
+      console.log(chalk.red(`\nUnexpected error occurred:  ${error.message}`));
       process.exit(1);
     } else {
-      console.log(chalk.redBright("\n Terminating the process..."));
+      console.log(chalk.redBright("\nTerminating the process..."));
       process.exit(1);
     }
   }

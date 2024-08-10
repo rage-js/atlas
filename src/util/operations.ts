@@ -84,7 +84,7 @@ async function pullCloudDatabase(configurations: RageConfigurations) {
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
       process.exit(1);
     } else {
-      console.log(chalk.redBright("\n Terminating the process..."));
+      console.log(chalk.redBright("\nTerminating the process..."));
       process.exit(1);
     }
   }
