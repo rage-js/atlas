@@ -2,8 +2,12 @@ import { input, select, confirm, password } from "@inquirer/prompts";
 import chalk from "chalk";
 import { RageConfigurations } from "../main";
 import { MongoClient } from "mongodb";
+import writeJsonFiles from "./writeJsonFiles";
 
-async function pullCloudDatabase(configurations: RageConfigurations) {
+async function pullCloudDatabase(
+  configurations: RageConfigurations,
+  databasePath: string
+) {
   try {
     const op = await confirm({
       message:
@@ -73,12 +77,17 @@ async function pullCloudDatabase(configurations: RageConfigurations) {
           // Skip
         } else {
           const data = await db.collection(collectionName).find().toArray();
-          console.log(data);
+          const res = await writeJsonFiles(
+            databasePath,
+            dbName,
+            collectionName,
+            data
+          );
         }
       }
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 20000));
   } catch (error: any) {
     if (error.message === "ExitPromptError") {
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
