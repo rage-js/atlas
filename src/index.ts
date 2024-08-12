@@ -149,7 +149,10 @@ async function checkDatabasePath(databasePath: string): Promise<boolean> {
 /**
  * Function that is in a never ending loop, which prompts repeatedly the list of operations that can be executed
  */
-async function prompt(configurations: RageConfigurations) {
+async function prompt(
+  configurations: RageConfigurations,
+  databasePath: string
+) {
   try {
     var loopActive = true;
     while (loopActive) {
@@ -176,7 +179,7 @@ async function prompt(configurations: RageConfigurations) {
       });
 
       if (op === "PullCloudDatabase") {
-        await Operations.pullCloudDatabase(configurations);
+        await Operations.pullCloudDatabase(configurations, databasePath);
       }
 
       if (op === "PushLocalDatabase") {
@@ -202,7 +205,7 @@ async function start() {
   const configurations = await fetchAllConfigurations(configPath);
   await checkDatabasePath(databasePath);
   // Prompt function automatically enters new lines when needed, so there is noo need to manually console log them
-  await prompt(configurations);
+  await prompt(configurations, databasePath);
 }
 
 start();
