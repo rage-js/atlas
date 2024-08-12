@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { RageConfigurations } from "../main";
 import { MongoClient } from "mongodb";
 import writeJsonFiles from "./writeJsonFiles";
+import sleep from "./sleep";
 
 async function pullCloudDatabase(
   configurations: RageConfigurations,
@@ -81,11 +82,14 @@ async function pullCloudDatabase(
             databasePath,
             dbName,
             collectionName,
-            data
+            data,
+            true
           );
         }
       }
     });
+
+    await sleep(10000);
   } catch (error: any) {
     if (error.message === "ExitPromptError") {
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
