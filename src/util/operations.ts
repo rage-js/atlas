@@ -86,8 +86,6 @@ async function pullCloudDatabase(
         }
       }
     });
-
-    await new Promise((resolve) => setTimeout(resolve, 20000));
   } catch (error: any) {
     if (error.message === "ExitPromptError") {
       console.log(chalk.red(`\nUnexpected error occurred: ${error.message}`));
