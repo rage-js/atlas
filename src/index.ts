@@ -8,6 +8,7 @@ import * as fsP from "fs/promises";
 import path from "path";
 import * as Operations from "./util/operations";
 import { RageConfigurations } from "./main";
+import sleep from "./util/sleep";
 
 /**
  * Function that prompts the user to enter credentials like application's path, database's path, database's type, database's secret key, etc.
@@ -36,17 +37,6 @@ async function askCredentials(): Promise<{
       process.exit(1);
     }
   }
-}
-
-/**
- * Sleep function which will make the process wait for few seconds
- * @param ms {number}
- * @returns {Promise<any>}
- */
-async function sleep(ms: number): Promise<any> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 }
 
 /**
