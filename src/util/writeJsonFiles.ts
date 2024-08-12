@@ -2,6 +2,8 @@ import chalk from "chalk";
 import path from "path";
 import * as fsS from "fs";
 import * as fsP from "fs/promises";
+import { createSpinner } from "nanospinner";
+import sleep from "./sleep";
 
 /**
  * Writes JSON files with the given data in the given directory
@@ -9,12 +11,14 @@ import * as fsP from "fs/promises";
  * @param {string} databaseName
  * @param {string} fileName
  * @param {any} dataToWrite
+ * @param [logger=false] logger
  */
 async function writeJsonFiles(
   databasePath: string,
   databaseName: string,
   fileName: string,
-  dataToWrite: any
+  dataToWrite: any,
+  logger: boolean = false
 ) {
   try {
     const folderPath = path.join(databasePath, databaseName);
@@ -32,19 +36,46 @@ async function writeJsonFiles(
     });
     const convertedJsonData = JSON.stringify(dataToWrite, null, 2);
     if (!fsS.existsSync(folderPath)) {
+      const spinner = createSpinner(
+        `Creating directory for ${databaseName} database...`
+      );
+      await sleep(2000);
+
       await fsP.mkdir(folderPath, { recursive: true });
-      // console log that the directory is created
+
+      // Log about the directory creation
+      if (logger) {
+        spinner.clear();
+        spinner.success({
+          text: `Directory for ${databaseName} database created.`,
+        });
+      }
     }
 
     const schemasFolderPath = path.join(folderPath, "schemas");
 
     if (!fsS.existsSync(schemasFolderPath)) {
+      const spinner = createSpinner(
+        `Creating schemas folder for ${databaseName} database...`
+      );
+      await sleep(2000);
+
       await fsP.mkdir(schemasFolderPath, { recursive: true });
-      // console log that the schemas directory is created
+
+      if (logger) {
+        spinner.clear();
+        spinner.success({
+          text: `Schemas folder for ${databaseName} database created.`,
+        });
+      }
     }
 
     if (!fsS.existsSync(path.join(schemasFolderPath, `${fileName}.json`))) {
-      // console log that the database doesn't have any schema files
+      console.log(
+        `${chalk.yellow(
+          "Warning!"
+        )} Schema file for ${fileName}/${databaseName} collection is not found!`
+      );
     }
 
     await fsP.writeFile(finalFilePath, convertedJsonData);
