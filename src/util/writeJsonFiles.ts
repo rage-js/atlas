@@ -21,6 +21,10 @@ async function writeJsonFiles(
   logger: boolean = false
 ) {
   try {
+    const bigSpinner = createSpinner(
+      "Cloning cloud database to local database..."
+    );
+
     const folderPath = path.join(databasePath, databaseName);
     const finalFilePath = path.join(folderPath, `${fileName}.json`);
     let newlyUpdatedData = [];
@@ -80,6 +84,10 @@ async function writeJsonFiles(
 
     await fsP.writeFile(finalFilePath, convertedJsonData);
 
+    bigSpinner.clear();
+    bigSpinner.success({
+      text: "Successfully clonded cloud database locally.",
+    });
     return finalFilePath;
   } catch (error: any) {
     if (error.message === "ExitPromptError") {
