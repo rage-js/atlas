@@ -7,6 +7,7 @@ import sleep from "./sleep";
 import path from "path";
 import * as fsS from "fs";
 import * as fsP from "fs/promises";
+import { createSpinner } from "nanospinner";
 
 async function pullCloudDatabase(
   configurations: RageConfigurations,
@@ -185,8 +186,14 @@ async function pushLocalDatabase(
         collection = collection.slice(0, -5);
         const cols = await db.listCollections({ name: collection }).toArray();
         if (cols.length === 0) {
+          const spinner = createSpinner(
+            `Creating new collection: ${collection}`
+          );
           await db.createCollection(collection);
-          // console log on collection creation
+          spinner.clear();
+          spinner.success({
+            text: `Successfully created new collection: ${collection}.`,
+          });
         }
       });
 
@@ -216,15 +223,25 @@ async function pushLocalDatabase(
             const c = db.collection(collectionName);
             await c.deleteMany({});
 
+            const spinner = createSpinner(
+              `Pushing ${dbName}/${collectionName}`
+            );
+
             content.forEach(async (document: any) => {
               c.insertOne(document).catch((error: any) => {
-                console.log(`Unexpected error occurred!`);
+                console.log(`Unexpected error occurred: ${error.message}`);
               });
             });
 
+            spinner.clear();
+            spinner.success({ text: `Pushed ${dbName}/${collectionName}` });
+
             continue;
           } catch (error: any) {
-            console.log(`Unexpected error occurred!`);
+            console.log(
+              chalk.red(`Unexpected error occurred: ${error.message}`)
+            );
+            process.exit(1);
           }
         }
       }
