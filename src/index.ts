@@ -173,7 +173,7 @@ async function prompt(
       }
 
       if (op === "PushLocalDatabase") {
-        await Operations.pushLocalDatabase(configurations);
+        await Operations.pushLocalDatabase(configurations, databasePath);
       }
 
       continue;
