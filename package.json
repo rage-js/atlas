@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/rage-js/atlas#readme",
   "devDependencies": {
+    "@changesets/cli": "^2.27.7",
     "@types/node": "^22.1.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.2.4",
