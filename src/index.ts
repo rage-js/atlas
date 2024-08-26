@@ -52,8 +52,8 @@ async function fetchAllConfigurations(
     await sleep(5000);
 
     // Get full path
-    const currentPath = process.cwd();
-    const fullPath = path.join(currentPath, configPath);
+    // const currentPath = process.cwd();
+    const fullPath = configPath; // path.join(currentPath, configPath);
 
     if (fsS.existsSync(fullPath)) {
       spinner.clear();
@@ -101,8 +101,7 @@ async function checkDatabasePath(databasePath: string): Promise<boolean> {
 
     // Get the full path
     const currentPath = process.cwd();
-    const fullPath =
-      databasePath === "." ? currentPath : path.join(currentPath, databasePath);
+    const fullPath = databasePath === "." ? currentPath : databasePath; // path.join(currentPath, databasePath);
 
     try {
       // Find the full path
