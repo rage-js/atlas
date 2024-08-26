@@ -168,7 +168,7 @@ async function pushLocalDatabase(
     const mongodbInstance = new MongoClient(newConfigSettings.secretKey!);
     await mongodbInstance.connect();
 
-    const actualPath = path.join(process.cwd(), databasePath);
+    const actualPath = databasePath; // path.join(process.cwd(), databasePath);
 
     newConfigSettings.dbs!.forEach(async (dbName) => {
       const db = mongodbInstance.db(dbName);
