@@ -1,6 +1,6 @@
 {
   "name": "@rage-js/atlas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A prompt-based dashboard to execute certain RAGE related operations",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
